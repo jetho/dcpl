@@ -29,7 +29,7 @@ eval c = manipStack operation
 		Swap -> swap
 		Sel -> sel
 		--todo  NGet -> nget
-    	--todo -> exec 
+		--todo -> exec 
 
 manipStack action = do
 	stack <- get
