@@ -1,6 +1,13 @@
 
-module DCPL.PostFix.EvalM
+{- 	Module: DCPL.PostFix.EvalM
 
+	An alternative implementation of the PostFix evaluator. It uses a monad transformer stack consisting of
+	state and error monads. While it's probably overkill for the simple PostFix language, it's instructive
+	to experiment with some other approaches :)
+ -}
+
+
+module DCPL.PostFix.EvalM
 where
 
 import DCPL.PostFix.Command

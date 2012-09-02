@@ -1,6 +1,5 @@
 
 module DCPL.PostFix.Command
-
 where
 
 data Command = Num Int
