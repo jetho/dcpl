@@ -13,10 +13,9 @@ type Stack = [Command]
 type EvalM a = StateT Stack (ErrorT String Identity) a
 
 eval :: Command -> EvalM ()
-eval c = case c of	
-	s@(Seq _) -> push s 
-	n@(Num _) -> push n 
-	otherwise -> manipStack operation
+eval s@(Seq _) = push s
+eval n@(Num _) = push n 
+eval c = manipStack operation
 	where operation = case c of
 		Add -> arithm (+)
 		Sub -> arithm (-)
@@ -29,8 +28,8 @@ eval c = case c of
 		Pop -> pop
 		Swap -> swap
 		Sel -> sel
-    --todo  NGet -> nget
-    --todo -> exec 
+		--todo  NGet -> nget
+    	--todo -> exec 
 
 manipStack action = do
 	stack <- get
