@@ -1,9 +1,9 @@
 
 {- Module: DCPL.PostFix.EvalM
 
-   An alternative implementation of the PostFix evaluator using a monad transformer stack 
-   consisting of StateT and ErrorT. While this is probably overkill for the simple 
-   PostFix language, it's instructive to experiment with some other approaches :) 
+   An alternative implementation of the PostFix evaluator using a monad transformer
+   stack consisting of StateT and ErrorT. While this is probably overkill for the 
+   simple PostFix language, it's instructive to experiment with some other approaches :) 
 -}
 
 
