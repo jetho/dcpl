@@ -23,24 +23,24 @@ eval :: Command -> EvalM ()
 eval s@(Seq _) = push s
 eval n@(Num _) = push n 
 eval c = manipStack operation
-	where operation = case c of
-		Add -> arithm (+)
-		Sub -> arithm (-)
-		Mul -> arithm (*)
-		Div -> arithm quot
-		Rem -> arithm rem
-		Eq ->  bool (==)
-		Lt ->  bool (<)
-		Gt ->  bool (>)
-		Pop -> pop
-		Swap -> swap
-		Sel -> sel
-		--todo  NGet -> nget
-		--todo -> exec 
+   where operation = case c of
+      Add -> arithm (+)
+      Sub -> arithm (-)
+      Mul -> arithm (*)
+      Div -> arithm quot
+      Rem -> arithm rem
+      Eq ->  bool (==)
+      Lt ->  bool (<)
+      Gt ->  bool (>)
+      Pop -> pop
+      Swap -> swap
+      Sel -> sel
+      --todo  NGet -> nget
+      --todo -> exec 
 
 manipStack action = do
-	stack <- get
-	action(stack)
+   stack <- get
+   action(stack)
 
 push c = modify (c:) >> return ()
 
@@ -60,7 +60,7 @@ sel (x:y:Num z:xs) = let res = if z == 0 then x else y in push res >> return ()
 sel (_:_:_:_) = throwError "The third parameter on the stack must be a number" 
 sel _  = throwError "Not enough values to select from"
 
-		
+      
 runEvalM :: Stack -> EvalM a -> (Either String (a, Stack))
 runEvalM st e = runIdentity(runErrorT (runStateT e st))
 
