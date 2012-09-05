@@ -57,7 +57,7 @@ swap (x:y:xs) = put (y:x:xs) >> return ()
 swap _ = throwError "Not enough values to swap"
 
 sel (x:y:Num z:xs) = let res = if z == 0 then x else y in push res >> return ()
-sel (_:_:_:_) = throwError "The third parameter on the stack must be a number" 
+sel (_:_:_:_) = throwError "The third parameter on the stack must be a numeral" 
 sel _  = throwError "Not enough values to select from"
 
       
