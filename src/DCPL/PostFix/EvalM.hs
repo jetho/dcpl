@@ -77,10 +77,9 @@ chainCmds = foldl1 (>>) . map eval
 runEvalM :: Stack -> EvalM a -> (Either String (a, Stack))
 runEvalM st e = runIdentity(runErrorT (runStateT e st))
 
-extractResult (_, Num n:xs) = Right n
-extractResult (_, _:_) = Left "Result value is not a numeral"
-extractResult _ = Left "No result value left on stack"
-
 postfix :: Stack -> [Command] -> (Either String Int) 
-postfix st cmds = runEvalM st (chainCmds cmds) >>= extractResult 
-
+postfix st cmds = runEvalM st (chainCmds cmds) >>= extractResult
+	where 
+		extractResult (_, Num n:xs) = Right n
+		extractResult (_, _:_) = Left "Result value is not a numeral"
+		extractResult _ = Left "No result value left on stack"
