@@ -11,6 +11,7 @@ module DCPL.PostFix.EvalM
 where
 
 import DCPL.PostFix.Command
+import Data.List
 import Control.Monad.State
 import Control.Monad.Error
 import Control.Monad.Identity
@@ -23,20 +24,21 @@ eval :: Command -> EvalM ()
 eval s@(Seq _) = push s
 eval n@(Num _) = push n 
 eval c = manipStack operation
-	where operation = case c of
-		Add -> arithm (+)
-		Sub -> arithm (-)
-		Mul -> arithm (*)
-		Div -> arithm quot
-		Rem -> arithm rem
-		Eq ->  bool (==)
-		Lt ->  bool (<)
-		Gt ->  bool (>)
-		Pop -> pop
-		Swap -> swap
-		Sel -> sel
-		NGet -> nget
-		Exec -> exec
+   where 
+      operation = case c of
+         Add -> arithm (+)
+         Sub -> arithm (-)
+         Mul -> arithm (*)
+         Div -> arithm quot
+         Rem -> arithm rem
+         Eq ->  bool (==)
+         Lt ->  bool (<)
+         Gt ->  bool (>)
+         Pop -> pop
+         Swap -> swap
+         Sel -> sel
+         NGet -> nget
+         Exec -> exec
       
 
 manipStack op = do
@@ -62,24 +64,24 @@ sel (_:_:_:_) = throwError "The third parameter on the stack must be a numeral"
 sel _  = throwError "Not enough values to select from"
 
 nget (Num (i+1):xs) 
-	| length xs > i = case xs !! i of
-		n@(Num _) -> push n
-		_ -> throwError $ "The stack element at index " ++ show i ++ " is not a numeral"
-	| otherwise = throwError $ "Index " ++ show i ++ " too large for nget"
+   | length xs > i = case xs !! i of
+      n@(Num _) -> push n
+      _ -> throwError $ "The stack element at index " ++ show i ++ " is not a numeral"
+   | otherwise = throwError $ "Index " ++ show i ++ " too large for nget"
 nget _ = throwError "The parameter for nget must be a numeral"
 
 exec (Seq cmds:xs) = put xs >> chainCmds cmds
 exec (top@_:_) = throwError $ "Exec expects a sequence on top of stack but found: " ++ show top
 exec _ = throwError "Can't perform Exec on empty stack"
 
-chainCmds = foldl1 (>>) . map eval
+chainCmds = foldl1' (>>) . map eval
 
 runEvalM :: Stack -> EvalM a -> (Either String (a, Stack))
 runEvalM st e = runIdentity(runErrorT (runStateT e st))
 
 postfix :: Stack -> [Command] -> (Either String Int) 
 postfix st cmds = runEvalM st (chainCmds cmds) >>= extractResult
-	where 
-		extractResult (_, Num n:xs) = Right n
-		extractResult (_, _:_) = Left "Result value is not a numeral"
-		extractResult _ = Left "No result value left on stack"
+   where 
+      extractResult (_, Num n:xs) = Right n
+      extractResult (_, _:_) = Left "Result value is not a numeral"
+      extractResult _ = Left "No result value left on stack"
