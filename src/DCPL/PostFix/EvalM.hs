@@ -36,7 +36,7 @@ eval c = manipStack operation
 		Swap -> swap
 		Sel -> sel
 		NGet -> nget
-		--todo Exec
+		Exec -> exec
       
 
 manipStack op = do
@@ -66,10 +66,21 @@ nget (Num i:xs)
 		n@(Num _) -> push n
 		_ -> throwError $ "The stack element at index " ++ show i ++ " is not a numeral"
 	| otherwise = throwError $ "Index " ++ show i ++ " too large for nget"
-nget _ = throwError "The Value for nget must be a numeral"
+nget _ = throwError "The value for nget must be a numeral"
 
+exec (Seq cmds:xs) = put xs >> chainCmds cmds
+exec ((top@_):_) = throwError $ "Exec expects a sequence on top of stack but found: " ++ show top
+exec _ = throwError "Can't perform Exec on empty stack"
+
+chainCmds = foldl1 (>>) . map eval
 
 runEvalM :: Stack -> EvalM a -> (Either String (a, Stack))
 runEvalM st e = runIdentity(runErrorT (runStateT e st))
 
---evalSeq = foldl1 (>>) . map eval
+extractResult (_, n@(Num x):xs) = Right n
+extractResult (_, _:_) = Left "Result value is not a numeral"
+extractResult _ = Left "No result value left on stack"
+
+postfix :: Stack -> [Command] -> (Either String Command) 
+postfix st cmds = runEvalM st (chainCmds cmds) >>= extractResult 
+
