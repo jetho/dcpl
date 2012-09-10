@@ -61,8 +61,8 @@ sel (x:y:Num z:xs) = let res = if z == 0 then x else y in push res
 sel (_:_:_:_) = throwError "The third parameter on the stack must be a numeral" 
 sel _  = throwError "Not enough values to select from"
 
-nget (Num i:xs) 
-	| length xs >= i = case xs !! (i-1) of
+nget (Num (i+1):xs) 
+	| length xs > i = case xs !! i of
 		n@(Num _) -> push n
 		_ -> throwError $ "The stack element at index " ++ show i ++ " is not a numeral"
 	| otherwise = throwError $ "Index " ++ show i ++ " too large for nget"
