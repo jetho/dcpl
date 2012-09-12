@@ -8,7 +8,9 @@
 
 
 module DCPL.PostFix.EvalM
-where
+( postfix
+) where
+
 
 import DCPL.PostFix.Command
 import Data.List
