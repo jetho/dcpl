@@ -76,7 +76,7 @@ exec (Seq cmds:xs) = put xs >> chainCmds cmds
 exec (top@_:_) = throwError $ "Exec expects a sequence on top of stack but found: " ++ show top
 exec _ = throwError "Can't perform Exec on empty stack"
 
-chainCmds = foldl1' (>>) . map eval
+chainCmds = mapM_ eval
 
 runEvalM :: Stack -> EvalM a -> (Either String (a, Stack))
 runEvalM st e = runIdentity(runErrorT (runStateT e st))
