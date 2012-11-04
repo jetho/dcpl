@@ -47,18 +47,18 @@ manipStack op = do
    stack <- get
    op(stack)
 
-push c = modify (c:) >> return ()
+push c = modify (c:)
 
-arithm op (Num x:Num y:_) = modify (\stack -> (Num $ op x y) : drop 2 stack) >> return ()
+arithm op (Num x:Num y:_) = modify (\stack -> (Num $ op x y) : drop 2 stack)
 arithm op _ = throwError "Not enough numbers for arithmetic operation"
 
 bool op (Num x:Num y:_) = let res = if op y x then 1 else 0 in push (Num res)
 bool op _ = throwError "Not enough numbers for boolean operation"
 
-pop (_:xs) = put xs >> return ()
+pop (_:xs) = put xs
 pop [] = throwError "Can't pop on empty stack"
 
-swap (x:y:xs) = put (y:x:xs) >> return ()
+swap (x:y:xs) = put (y:x:xs)
 swap _ = throwError "Not enough values to swap"
 
 sel (x:y:Num z:xs) = let res = if z == 0 then x else y in push res 
