@@ -26,9 +26,9 @@ type EvalM a = StateT Stack (ErrorT String Identity) a
 eval :: Command -> EvalM ()
 eval s@(Seq _) = push s
 eval n@(Num _) = push n 
-eval c = manipStack operation
+eval c = stackAction op
    where 
-      operation = case c of
+      op = case c of
          Add -> arithm (+)
          Sub -> arithm (-)
          Mul -> arithm (*)
@@ -44,13 +44,12 @@ eval c = manipStack operation
          Exec -> exec
       
 
-manipStack op = do
+stackAction op = do
    stack <- get
-   op(stack)
+   op stack
 
-throwErrorS msg = do
-    stack <- get
-    throwError $ msg ++ "\nStack: " ++ show stack 
+throwErrorS msg = stackAction (\stack -> throwError $ msg ++ "\nStack: " ++ show stack)
+  
 
 push c = modify (c:)
 
