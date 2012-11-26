@@ -23,8 +23,6 @@ type Stack = [Command]
 type EvalM a = StateT Stack (ErrorT String Identity) a
 
 
-
-
 eval :: Command -> EvalM ()
 eval s@(Seq _) = push s
 eval n@(Num _) = push n 
