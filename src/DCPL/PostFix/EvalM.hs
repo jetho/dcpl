@@ -26,7 +26,7 @@ type EvalM a = StateT Stack (ErrorT String Identity) a
 eval :: Command -> EvalM ()
 eval s@(Seq _) = push s
 eval n@(Num _) = push n 
-eval c = stackAction op
+eval c = stackExec op
    where 
       op = case c of
          Add -> arithm (+)
@@ -44,11 +44,11 @@ eval c = stackAction op
          Exec -> exec
       
 
-stackAction op = do
+stackExec op = do
    stack <- get
    op stack
 
-throwErrorS msg = stackAction (\stack -> throwError $ msg ++ "\nStack: " ++ show stack)
+throwErrorS msg = stackExec $ throwError . (++) (msg ++ "\nStack: ") . show
   
 
 push c = modify (c:)
@@ -77,7 +77,7 @@ nget (Num i:xs)
 nget _ = throwErrorS "The parameter for nget must be a numeral"
 
 exec (Seq cmds:xs) = put xs >> chainCmds cmds
-exec (top@_:_) = throwErrorS $ "Exec expects a sequence on top of stack but found: " ++ show top
+exec (top:_) = throwErrorS $ "Exec expects a sequence on top of stack but found: " ++ show top
 exec _ = throwErrorS "Can't perform Exec on empty stack"
 
 chainCmds = mapM_ eval
