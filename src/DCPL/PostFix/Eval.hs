@@ -20,7 +20,6 @@ type Stack = [Command]
 
 left msg stack = Left $ msg ++ "\nStack: " ++ show stack
 
-
 eval:: Command -> Stack -> Either String Stack 
 eval n@(Num _) = push n
 eval s@(Seq _) = push s
@@ -43,7 +42,6 @@ eval c = op
 
 
 push c = Right . (c:)
-
 
 arithm op (Num x:Num y:xs) = push (Num $ op x y) xs
 arithm _ st = left "Not enough numbers for arithmetic operation" st
